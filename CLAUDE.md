@@ -152,6 +152,32 @@ CGM → BgSource plugin → Database → RxBus(EventNewBgReading) → LoopPlugin
 | Plugin Development | `docs/PLUGIN_DEVELOPMENT.md` | How to create plugins |
 | This File | `CLAUDE.md` | Agent context and conventions |
 
+### Skillset Files (Agent Training)
+
+Read the relevant skill file before working in that domain:
+
+| Skill | Location | Read When |
+|-------|----------|-----------|
+| Diabetes Domain | `skills/DIABETES_DOMAIN.md` | Touching ANY insulin/algorithm/constraint code |
+| Pump Drivers | `skills/PUMP_DRIVER_PATTERNS.md` | Working on pump/ modules |
+| RxJava3 Patterns | `skills/RXJAVA_PATTERNS.md` | Adding/modifying reactive code |
+| Code Review Guide | `skills/CODE_REVIEW_GUIDE.md` | Reviewing PRs or deciding auto-fix vs flag |
+| Testing Strategy | `skills/TESTING_STRATEGY.md` | Writing or reviewing tests |
+| Dagger DI | `skills/DAGGER_DI_PATTERNS.md` | Adding injectable components |
+| Database Ops | `skills/DATABASE_OPERATIONS.md` | Working with Room/transactions |
+| Hotspot Registry | `skills/HOTSPOT_REGISTRY.md` | Modifying files >500 lines |
+
+### Auto-Fix Thresholds
+
+```
+Change Size     Safety Level        Action
+1-100 lines     Non-critical        AUTO-FIX: Implement, test, create PR
+1-100 lines     Safety-critical     FLAG: Create PR but request human review
+100-300 lines   Non-critical        IMPLEMENT + FLAG: Detailed PR explanation
+100-300 lines   Safety-critical     ANALYSIS ONLY: Create issue with proposal
+300+ lines      Any level           PLAN ONLY: Issue with design, wait for approval
+```
+
 ---
 
 ## Code Quality Standards
