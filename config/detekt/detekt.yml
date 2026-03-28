@@ -1,0 +1,209 @@
+# detekt configuration for AndroidAPS
+# Medical device software — stricter rules for safety-critical code
+#
+# Run: ./gradlew detekt
+# Docs: https://detekt.dev/docs/rules/
+
+build:
+  maxIssues: 0  # Fail on any issue (strict for medical device)
+  excludeCorrectable: false
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+# Complexity rules — flag overly complex code that's hard to verify
+complexity:
+  active: true
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 15  # Medical device: keep methods understandable
+  LongMethod:
+    active: true
+    threshold: 60
+  LongParameterList:
+    active: true
+    functionThreshold: 8
+    constructorThreshold: 10
+    ignoreAnnotated:
+      - 'Inject'
+      - 'Provides'
+  NestedBlockDepth:
+    active: true
+    threshold: 4
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 15
+    thresholdInClasses: 15
+    thresholdInInterfaces: 15
+    thresholdInObjects: 15
+    thresholdInEnums: 15
+    ignoreAnnotated:
+      - 'Module'
+  ComplexCondition:
+    active: true
+    threshold: 4
+
+# Code smell detection
+style:
+  active: true
+  MagicNumber:
+    active: false  # Too many false positives in medical constants
+  ReturnCount:
+    active: true
+    max: 4
+    excludeGuardClauses: true
+  ForbiddenComment:
+    active: true
+    values:
+      - 'FIXME'
+      - 'HACK'
+      - 'STOPSHIP'
+    allowedPatterns: 'TODO'
+  MaxLineLength:
+    active: true
+    maxLineLength: 200  # Match existing codebase style
+    excludeCommentStatements: true
+  WildcardImport:
+    active: false  # Disabled per .editorconfig
+  UnusedPrivateMember:
+    active: true
+    allowedNames: '(_|ignored|expected|serialVersionUID)'
+  UnnecessaryAbstractClass:
+    active: true
+    ignoreAnnotated:
+      - 'Module'
+  ForbiddenVoid:
+    active: false  # Kotlin interop with Java needs void
+
+# Potential bugs
+potential-bugs:
+  active: true
+  CastToNullableType:
+    active: true
+  Deprecation:
+    active: false  # Too many in legacy code
+  DontDowncastCollectionType:
+    active: true
+  DoubleMutabilityForCollection:
+    active: true
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
+  ExitOutsideMain:
+    active: true
+  HasPlatformType:
+    active: true
+  IgnoredReturnValue:
+    active: false  # RxJava disposables trigger this
+  ImplicitDefaultLocale:
+    active: true
+  MapGetWithNotNullAssertionOperator:
+    active: true
+  NullableToStringCall:
+    active: true
+  UnconditionalJumpStatementInLoop:
+    active: true
+  UnnecessaryNotNullOperator:
+    active: true
+  UnnecessarySafeCall:
+    active: true
+  UnreachableCode:
+    active: true
+  UnsafeCallOnNullableType:
+    active: true
+  UselessPostfixExpression:
+    active: true
+
+# Exception handling
+exceptions:
+  active: true
+  NotImplementedDeclaration:
+    active: true
+  SwallowedException:
+    active: true
+    ignoredExceptionTypes:
+      - 'InterruptedException'
+      - 'MalformedURLException'
+      - 'NumberFormatException'
+      - 'ParseException'
+  TooGenericExceptionCaught:
+    active: true
+    exceptionNames:
+      - 'ArrayIndexOutOfBoundsException'
+      - 'Error'
+      - 'IllegalMonitorStateException'
+      - 'IndexOutOfBoundsException'
+      - 'NullPointerException'
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+  TooGenericExceptionThrown:
+    active: true
+    exceptionNames:
+      - 'Error'
+      - 'Exception'
+      - 'RuntimeException'
+      - 'Throwable'
+
+# Performance
+performance:
+  active: true
+  ArrayPrimitive:
+    active: true
+  CouldBeSequence:
+    active: false  # Not always better for small collections
+  ForEachOnRange:
+    active: true
+  SpreadOperator:
+    active: false  # Used in varargs
+  UnnecessaryTemporaryInstantiation:
+    active: true
+
+# Empty blocks
+empty-blocks:
+  active: true
+  EmptyCatchBlock:
+    active: true
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+  EmptyClassBlock:
+    active: true
+  EmptyDefaultConstructor:
+    active: true
+  EmptyDoWhileBlock:
+    active: true
+  EmptyElseBlock:
+    active: true
+  EmptyFinallyBlock:
+    active: true
+  EmptyForBlock:
+    active: true
+  EmptyFunctionBlock:
+    active: true
+    ignoreOverridden: true  # Plugin base classes have empty defaults
+  EmptyIfBlock:
+    active: true
+  EmptyInitBlock:
+    active: true
+  EmptyKtFile:
+    active: true
+  EmptySecondaryConstructor:
+    active: true
+  EmptyTryBlock:
+    active: true
+  EmptyWhenBlock:
+    active: true
+  EmptyWhileBlock:
+    active: true
+
+# Naming conventions
+naming:
+  active: true
+  FunctionNaming:
+    active: true
+    ignoreAnnotated:
+      - 'Composable'
+      - 'Test'
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Z][_A-Z0-9]*'
+  VariableNaming:
+    active: true
+    privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
