@@ -14,8 +14,8 @@
 | **Dana RS/i** | 0.05 U | Yes | Percent | 200% | 0.01 U/h | 0.04 | No |
 | **Omnipod Eros** | 0.05 U | Yes | Absolute | 30 U/h | 0.05 U/h | 0.05 | Yes |
 | **Omnipod Dash** | 0.05 U | Yes | Absolute | 30 U/h | 0.05 U/h | 0.05 | Yes |
-| **Medtronic 512-754** | 0.1 U | Yes | Absolute | 35 U/h | 0.05 U/h | 0.05 | No |
-| **Medtronic 523-Veo** | 0.05 U | Yes | Absolute | 35 U/h | 0.025 U/h | 0.025 | No |
+| **Medtronic 512-754** | 0.1 U | No (TBR comp.) | Absolute | 35 U/h | 0.05 U/h | 0.05 | No |
+| **Medtronic 523-Veo** | 0.05 U | No (TBR comp.) | Absolute | 35 U/h | 0.025 U/h | 0.025 | No |
 | **Combo (Accu-Chek)** | 0.1 U | Yes | Percent | 500% | 0.01 U/h | 0.01 | No |
 | **Insight** | 0.01 U | Yes | Percent | 250% | 0.01 U/h | 0.02 | No |
 | **Diaconn G8** | 0.01 U | Yes | Absolute | 15 U/h | 0.01 U/h | 0.05 | No |
