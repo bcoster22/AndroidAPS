@@ -1,5 +1,36 @@
 # CircleCI configuration for bcoster22/AndroidAPS fork
 # Uses CircleCI cloud runners (not nightscout's self-hosted runners)
+#
+# TODO (future version): Add Android emulator + connectedFullDebugAndroidTest
+# ─────────────────────────────────────────────────────────────────────────────
+# Nightscout's original config uses a self-hosted runner (resource_class: nightscout/android)
+# with a pre-configured Android emulator for instrumentation tests:
+#
+#   machine: true
+#   resource_class: nightscout/android
+#
+#   Emulator setup:
+#     - System image: system-images;android-31;google_apis_playstore;x86_64
+#     - AVD created via: avdmanager create avd -n citest -k <system-image>
+#     - Emulator launched with: emulator -avd citest -delay-adb -verbose
+#         -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+#     - ANDROID_SDK_ROOT=/usr/lib/android-sdk
+#     - ANDROID_HOME=/usr/lib/android-sdk
+#
+#   Test commands (after emulator boot):
+#     - ./gradlew connectedFullDebugAndroidTest
+#     - adb devices | grep emulator | cut -f1 | while read -r line; do adb -s $line emu kill; done
+#
+# To replicate this on a self-hosted runner:
+#   1. Set up a Linux machine with Android SDK, cmdline-tools, and emulator installed
+#   2. Install the CircleCI self-hosted runner agent
+#   3. Register it as resource_class: bcoster22/android
+#   4. Pre-install system image: sdkmanager "system-images;android-31;google_apis_playstore;x86_64"
+#   5. Switch this config to use: machine: true / resource_class: bcoster22/android
+#   6. Add emulator create/launch/kill steps from nightscout's original config
+#
+# See nightscout's original config preserved in: .circleci/config.yml.nightscout
+# ─────────────────────────────────────────────────────────────────────────────
 version: 2.1
 
 orbs:
