@@ -23,6 +23,7 @@ buildscript {
 
 plugins {
     alias(libs.plugins.klint)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.moduleDependencyGraph)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler) apply false
@@ -55,6 +56,15 @@ allprojects {
 
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "jacoco")
+}
+
+// detekt configuration — static analysis for code quality
+detekt {
+    config.setFrom("${rootProject.projectDir}/config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+    parallel = true
+    // Start with warnings only — switch to errors once baseline is clean
+    ignoreFailures = true
 }
 
 // Setup all reports aggregation
