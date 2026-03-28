@@ -137,10 +137,99 @@
 |---------|------|-----------|-----------|-----------|-------|---------|---------|---------|---------|-------|
 | Absolute TBR | via % | Yes | Yes | Yes | via % | via % | Yes | Yes | Yes | Yes |
 | Percent TBR | Yes | No | No | No | Yes | Yes | No | No | No | No |
-| Extended Bolus | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Extended Bolus | Yes | Yes | Yes | No (TBR) | Yes | Yes | Yes | Yes | Yes | Yes |
 | History Read | Yes | Partial | Partial | Yes | Via display | Yes | Yes | Partial | Yes | Partial |
 | TDD Read | Yes | No | No | Yes | Via display | Yes | Yes | No | Yes | No |
 | Battery Level | Yes | No | No | Yes | No | Yes | Yes | No | No | No |
 | DST Auto | No | Yes | Yes | Some | No | No | No | No | No | No |
 | Bolus Progress | Yes | Yes | Yes | No | Via display | Yes | Yes | Yes | Yes | Yes |
-| Custom Actions | No | Yes | Yes | No | No | No | No | No | Yes | No |
+| Custom Actions | No | Yes | Yes | Yes (3) | No | No | No | No | Yes | No |
+
+---
+
+## BLE Service & Characteristic UUIDs
+
+Reference for debugging BLE communication and writing driver code.
+
+### Dana RS/i
+```
+UART Read:  0000fff1-0000-1000-8000-00805f9b34fb
+UART Write: 0000fff2-0000-1000-8000-00805f9b34fb
+CCCD:       00002902-0000-1000-8000-00805f9b34fb
+Packet Format: Start 0xA5 / End 0x5A (standard), Start 0xAA / End 0xEE (BLE5)
+Encryption: Custom (DEFAULT or ENHANCED mode)
+Write Delay: 50ms between packets
+Bonding: Required
+```
+Source: `pump/danars/src/main/kotlin/app/aaps/pump/danars/services/BLEComm.kt`
+
+### Omnipod Dash
+```
+Scan Service:    00004024-0000-1000-8000-00805F9B34FB (16-bit: 4024)
+Main Service:    1a7e-4024-e3ed-4464-8b7e-751e03d0dc5f
+Secondary:       000a (unknown service)
+Communication:   Async packet-based with BlockingQueue for receive
+Bonding:         Must be OFF on Android 15+
+```
+Source: `pump/omnipod/common/src/main/kotlin/.../bledriver/comm/ServiceDiscoverer.kt`
+
+### Medtrum Nano/300U
+```
+Service:    669A9001-0008-968F-E311-6050405558B3
+Read Char:  669a9120-0008-968f-e311-6050405558b3
+Write Char: 669a9101-0008-968f-e311-6050405558b3
+CCCD:       00002902-0000-1000-8000-00805f9b34fb
+Device Name Filter: "MT"
+Manufacturer ID: 18305
+Write Delay: 10ms between packets
+Notifications: 0x10 (notification), 0x20 (indication)
+```
+Source: `pump/medtrum/src/main/kotlin/app/aaps/pump/medtrum/services/BLEComm.kt`
+
+### Diaconn G8
+```
+Write Char: 6e400002-b5a3-f393-e0a9-e50e24dcca9e (Nordic UART TX)
+Read Char:  6e400003-b5a3-f393-e0a9-e50e24dcca9e (Nordic UART RX)
+Protocol:   Nordic UART Service (NUS) profile
+```
+Source: `pump/diaconn/src/main/kotlin/app/aaps/pump/diaconn/service/BLECommonService.kt`
+
+### Insight (RFCOMM, not GATT)
+```
+RFCOMM UUID: 00001101-0000-1000-8000-00805f9b34fb (SPP UUID)
+Connection:  createInsecureRfcommSocketToServiceRecord()
+Security:    SATL (Secure Asynchronous Transmission Layer)
+Key Exchange: RSA with nonce validation (Spongy Castle)
+```
+Source: `pump/insight/src/main/kotlin/app/aaps/pump/insight/connection_service/InsightConnectionService.kt`
+
+### Combo V2 (RFCOMM)
+```
+Protocol: BLE GATT with frame-based ComboFrame protocol
+Note: Despite using BluetoothGatt API, uses frame-based serial communication
+```
+Source: `pump/combov2/comboctl/src/androidMain/kotlin/.../AndroidBluetoothDevice.kt`
+
+### Equil
+```
+Protocol: BLE GATT (encrypted)
+Encryption: Custom encrypted commands
+Firmware Query: CmdDevicesOldGet (firmware at byte positions 12-13)
+Known Bug: Firmware reports 0.0 on some units (#4505)
+```
+Source: `pump/equil/src/main/kotlin/app/aaps/pump/equil/ble/EquilBLE.kt`
+
+### Medtronic (via RileyLink)
+```
+Phone ←BLE GATT→ RileyLink ←RF 916MHz→ Pump
+RileyLink handles BLE-to-RF translation
+Custom binary packet protocol over RF
+```
+Source: `pump/rileylink/src/main/kotlin/app/aaps/pump/common/hw/rileylink/ble/RileyLinkBLE.kt`
+
+### Omnipod Eros (via RileyLink)
+```
+Phone ←BLE GATT→ RileyLink ←RF 433MHz→ Pod
+Same RileyLink relay as Medtronic but different RF frequency
+```
+Source: `pump/rileylink/` + `pump/omnipod-eros/`
